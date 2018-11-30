@@ -4,7 +4,7 @@
 Simulation to estimate the delivery service time
 
 ## Team Member(s): 
-Yekai Chen, Xiner Liu
+Yekai Chen, Xiner Liu, Yue Xian
 
 # Monte Carlo Simulation Scenario & Purpose: 
 This program aims to determine the total time cost for a take-out delivery order which consists of food preparation time and traffic time. The merchant and customer sit in the downleft and upright two edges of a square which made from 4x4 smaller squares. For the traffic time, it would be affected by the weather and route choice. Using Monte Carlo can estimate the time cost for each section of route, the time impact by weather and the food preparation time. After simulation, the estimated food preparation time and optimistic traffic time would come to make the shortest delivery service time.
