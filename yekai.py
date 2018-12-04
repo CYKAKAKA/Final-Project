@@ -36,16 +36,10 @@ def mod_pert_random(low, likely, high, confidence=4, samples=10000):
 def mapping(length, width):
     G = nx.grid_2d_graph(length, width)
     n = len(list(G.edges))
-    estimate_time = []
-    for road in list(range(n)):
-        sample_list = []
-        (low, likely, high) = set(np.random.randint(1, 10, 3))
-        for repeat in list(range(1000)):
-            sample_list.append(np.mean(mod_pert_random(low, likely, high, confidence=2)))
-        estimate_time.append(np.mean(sample_list))
     for edge in list(range(n)):
-        G.edges[G.edges[edge][0], G.edges[edge][1]]['time'] = estimate_time[edge]
-
+        likely = np.random.randint(10, 20, 1)
+        G.edges[G.edges[edge][0], G.edges[edge][1]]['time'] = np.mean(mod_pert_random(low=5, likely=likely, high=50, confidence=2))
+    return G
 
 
 # G = nx.DiGraph()
