@@ -35,12 +35,18 @@ def mod_pert_random(low, likely, high, confidence=4, samples=10000):
 
 def mapping(length, width):
     G = nx.grid_2d_graph(length, width)
-    n = len(list(G.edges))
-    for edge in list(range(n)):
-        likely = np.random.randint(10, 20, 1)
-        G.edges[G.edges[edge][0], G.edges[edge][1]]['time'] = np.mean(mod_pert_random(low=5, likely=likely, high=50, confidence=2))
+    for edge in list(G.edges):
+        low = np.random.randint(1, 10)
+        high = np.random.randint(low+1, 30)
+        likely = np.random.randint(low, high)
+        G.edges[edge[0], edge[1]]['time'] = np.mean(mod_pert_random(low, likely, high, confidence=2))
+    G.nodes[int(length/2), int(width/2)]['name'] = 'RESTAURANT'
     return G
 
+
+if __name__ == '__main__':
+    new_map = mapping(7, 8)
+    print(nx.get_node_attributes(new_map, 'name').keys())
 
 # G = nx.DiGraph()
 #
