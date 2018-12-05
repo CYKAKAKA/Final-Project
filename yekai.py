@@ -113,6 +113,5 @@ if __name__ == '__main__':
     new_map = mapping(3, 3)
     # print(nx.spring_layout(new_map))
     nx.draw(new_map, node_color=['b', 'r', 'r', 'r', 'b', 'r', 'r', 'r', 'r'])
-    # nx.draw(new_map, pos={(0, 0): np.array([-0.22454824,  0.04780557])}, node_color='b')
     plt.show(new_map)
 
