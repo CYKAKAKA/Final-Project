@@ -34,19 +34,79 @@ def mod_pert_random(low, likely, high, confidence=4, samples=10000):
 
 
 def mapping(length, width):
+    '''
+    With designated length and width, this function generate a length x width grid. And define the middle point as
+    the location of restaurant.
+
+    :param length: The number of nodes vertically
+    :param width: The number of nodes horizontally
+    :return: A NetworkX 2D gird graph
+    '''
     G = nx.grid_2d_graph(length, width)
     for edge in list(G.edges):
         low = np.random.randint(1, 10)
-        high = np.random.randint(low+1, 30)
+        high = np.random.randint(low + 1, 30)
         likely = np.random.randint(low, high)
         G.edges[edge[0], edge[1]]['time'] = np.mean(mod_pert_random(low, likely, high, confidence=2))
-    G.nodes[int(length/2), int(width/2)]['name'] = 'RESTAURANT'
+    G.nodes[int(length / 2), int(width / 2)]['name'] = 'RESTAURANT'
     return G
 
 
+def prep_time(order_size):
+    """
+    Return the preparation time for the order based on its size
+    :param size: size for the order
+    :return: preparation time
+    """
+    prep_time = np.random.uniform(0, 10, size=100)
+    if order_size == "S":
+        return prep_time
+    elif order_size == "M":
+        return prep_time * 1.5
+    else:
+        return prep_time * 2
+
+
+def deliver_wait_time():
+    """
+    Return the wait time of the deliver man for this specific order
+    :param: none
+    :return: wait time
+    """
+    wait_time = 0
+    # When the order arrives, the total orders in the queue,maximum 10
+    queue_count = np.random.randint(0, 11)
+    order_size = ['S', 'M', 'L']
+    for i in range(queue_count + 1):
+        order_num = np.random.randint(0, 3)
+        preparation_time = prep_time(order_size[order_num])
+        number = np.random.randint(0, len(preparation_time))
+        wait_time += preparation_time[number]
+    return wait_time
+
+
+def judgement(mapgrid, delivery_point):
+    """
+    Depend on the time that cost on wait and traffic to new delivery point, this function tells if we should wait or
+    leave now
+
+    :param mapgrid: Made grid with restaurant location
+    :param delivery_point: Randomly generated location on grid
+    :return: 'W'ait or leave 'N'ow
+    """
+    for location, name in nx.get_node_attributes(mapgrid, 'name').items():
+        if name == 'RESTAURANT':
+            coordinate = location
+    time = nx.dijkstra_path_length(mapgrid, source=coordinate, target=delivery_point)
+    if time * 2 > deliver_wait_time():
+        return {delivery_point: 'W'}  # for 'wait'
+    else:
+        return {delivery_point: 'N'}  # for 'now'
+
+
 if __name__ == '__main__':
-    new_map = mapping(7, 8)
-    print(nx.get_node_attributes(new_map, 'name').keys())
+    new_map = mapping(100, 100)
+    print((judgement(new_map, (2, 3))))
 
 # G = nx.DiGraph()
 #
