@@ -2,6 +2,7 @@ import networkx as nx
 import pylab
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 
 
 def mod_pert_random(low, likely, high, confidence=4, samples=10000):
@@ -100,9 +101,10 @@ def judgement(mapgrid, new_delivery_point):
     for restaurant_location, name in nx.get_node_attributes(mapgrid, 'name').items():
         if name == 'RESTAURANT':
             coordinate = restaurant_location
-    new_time = nx.dijkstra_path_length(mapgrid, source=coordinate, target=new_delivery_point)
-    previous_time = nx.dijkstra_path_length(mapgrid, source=coordinate, target=previous_order_location)
-    time_two_destination = nx.dijkstra_path_length(mapgrid, source=previous_order_location, target=new_delivery_point)
+    new_time = nx.dijkstra_path_length(mapgrid, source=coordinate, target=new_delivery_point, weight='time')
+    previous_time = nx.dijkstra_path_length(mapgrid, source=coordinate, target=previous_order_location, weight='time')
+    time_two_destination = nx.dijkstra_path_length(mapgrid, source=previous_order_location, target=new_delivery_point,
+                                                   weight='time')
     if (new_time + previous_time) * 2 > deliver_wait_time() + new_time + time_two_destination + previous_time:
         return {new_delivery_point: 'W'}  # for 'wait'
     else:
@@ -110,8 +112,26 @@ def judgement(mapgrid, new_delivery_point):
 
 
 if __name__ == '__main__':
-    new_map = mapping(3, 3)
-    # print(nx.spring_layout(new_map))
-    nx.draw(new_map, node_color=['b', 'r', 'r', 'r', 'b', 'r', 'r', 'r', 'r'])
-    plt.show(new_map)
-
+    location_list = []
+    decision_list = []
+    length = int(input('Please input the length of the grid:\n'))
+    width = int(input('Please input the width of the grid:\n'))
+    for repeat in list(range(1000)):
+        new_map = mapping(length, width)
+        for nodes in list(new_map.nodes()):
+            for location, decision in judgement(new_map, nodes).items():
+                location_list.append(location)
+                decision_list.append(decision)
+    result = pd.DataFrame({'location': location_list, 'decision': decision_list})
+    temp = result.groupby('location')['decision'].sum().reset_index()
+    list_N = []
+    list_W = []
+    for i in list(range(length * width)):
+        n_N = temp['decision'][i].count('N')
+        n_W = temp['decision'][i].count('W')
+        list_N.append(n_N)
+        list_W.append(n_W)
+    result = pd.DataFrame({'location': list(temp['location']), 'Wait': list_W, 'Now': list_N})
+    result['Wait_percentage'] = result['Wait'] / 1000
+    result['Now_percentage'] = result['Now'] / 1000
+    # print(result)
