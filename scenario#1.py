@@ -49,8 +49,21 @@ def mapping(length, width):
         low = np.random.randint(1, 10)
         high = np.random.randint(low + 1, 30)
         likely = np.random.randint(low, high)
-        G.edges[edge[0], edge[1]]['time'] = np.mean(mod_pert_random(low, likely, high, confidence=2))
+        G.edges[edge[0], edge[1]]['low'] = low
+        G.edges[edge[0], edge[1]]['high'] = high
+        G.edges[edge[0], edge[1]]['likely'] = likely
     G.nodes[int(length / 2), int(width / 2)]['name'] = 'RESTAURANT'
+    return G
+
+
+def real_map(G):
+    for edge in list(G.edges):
+        low = G.edges[edge[0], edge[1]]['low']
+        high = G.edges[edge[0], edge[1]]['high']
+        likely = G.edges[edge[0], edge[1]]['likely']
+        distribution = mod_pert_random(low, likely, high, confidence=2)
+        number = np.random.randint(0, len(distribution))
+        G.edges[edge[0], edge[1]]['time'] = distribution[number]
     return G
 
 
@@ -87,16 +100,16 @@ def deliver_wait_time():
     return wait_time
 
 
-def judgement(mapgrid, new_delivery_point):
+def judgement(mapgrid, new_delivery_point, previous_order_location):
     """
     Depend on the time that cost on wait and traffic to new delivery point, this function tells if we should wait or
     leave now
 
     :param mapgrid: Made grid with restaurant location
     :param new_delivery_point: Randomly generated location on grid
+    :param previous_order_location:
     :return: 'W'ait or leave 'N'ow
     """
-    previous_order_location = (1, 1)
     coordinate = (0, 0)
     for restaurant_location, name in nx.get_node_attributes(mapgrid, 'name').items():
         if name == 'RESTAURANT':
@@ -114,10 +127,10 @@ def judgement(mapgrid, new_delivery_point):
 if __name__ == '__main__':
     location_list = []
     decision_list = []
-    length = int(input('Please input the length of the grid:\n'))
-    width = int(input('Please input the width of the grid:\n'))
+    grid_length = int(input('Please input the length of the grid:\n'))
+    grid_width = int(input('Please input the width of the grid:\n'))
     for repeat in list(range(1000)):
-        new_map = mapping(length, width)
+        new_map = mapping(grid_length, grid_width)
         for nodes in list(new_map.nodes()):
             for location, decision in judgement(new_map, nodes).items():
                 location_list.append(location)
@@ -126,7 +139,7 @@ if __name__ == '__main__':
     temp = result.groupby('location')['decision'].sum().reset_index()
     list_N = []
     list_W = []
-    for i in list(range(length * width)):
+    for i in list(range(grid_length * grid_width)):
         n_N = temp['decision'][i].count('N')
         n_W = temp['decision'][i].count('W')
         list_N.append(n_N)
