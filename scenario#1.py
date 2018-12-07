@@ -82,7 +82,7 @@ def prep_time(order_size):
         return preparation_time * 2
 
 
-def deliver_wait_time():
+def deliver_wait_time(queue_count):
     """
     Return the wait time of the deliver man for this specific order
     :param: none
@@ -90,7 +90,6 @@ def deliver_wait_time():
     """
     wait_time = 0
     # When the order arrives, the total orders in the queue,maximum 10
-    queue_count = np.random.randint(0, 11)
     order_size = ['S', 'M', 'L']
     for i in range(queue_count + 1):
         order_num = np.random.randint(0, 3)
@@ -100,14 +99,14 @@ def deliver_wait_time():
     return wait_time
 
 
-def judgement(mapgrid, new_delivery_point, previous_order_location):
+def judgement(mapgrid, new_delivery_point, queue_count, previous_order_location):
     """
     Depend on the time that cost on wait and traffic to new delivery point, this function tells if we should wait or
     leave now
-
     :param mapgrid: Made grid with restaurant location
     :param new_delivery_point: Randomly generated location on grid
-    :param previous_order_location:
+    :param queue_count:how many orders are waiting to be prepared when the new order arrives
+    :param previous_order_location: last order location
     :return: 'W'ait or leave 'N'ow
     """
     coordinate = (0, 0)
@@ -118,7 +117,7 @@ def judgement(mapgrid, new_delivery_point, previous_order_location):
     previous_time = nx.dijkstra_path_length(mapgrid, source=coordinate, target=previous_order_location, weight='time')
     time_two_destination = nx.dijkstra_path_length(mapgrid, source=previous_order_location, target=new_delivery_point,
                                                    weight='time')
-    if (new_time + previous_time) * 2 > deliver_wait_time() + new_time + time_two_destination + previous_time:
+    if (new_time + previous_time) * 2 > deliver_wait_time(queue_count) + new_time + time_two_destination + previous_time:
         return {new_delivery_point: 'W'}  # for 'wait'
     else:
         return {new_delivery_point: 'N'}  # for 'now'
