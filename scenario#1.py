@@ -134,8 +134,9 @@ if __name__ == '__main__':
     x, y = int(previous_loc.split(',')[0]), int(previous_loc.split(',')[1])
     previous_location = (x, y)
     restaurant_loc = (int(grid_length/2), int(grid_width/2))
+    new_map = mapping((grid_length, grid_width))
     for repeat in range(1000):
-        new_map = mapping(grid_length, grid_width)
+        new_map = real_map(new_map)
         for nodes in list(new_map.nodes()):
             for location, decision in judgement(new_map, restaurant_loc, nodes, queue_number, previous_location).items():
                 location_list.append(location)
