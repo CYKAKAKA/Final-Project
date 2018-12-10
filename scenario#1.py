@@ -150,10 +150,10 @@ def judgement(mapgrid, coordinate, new_delivery_point, queue_count, previous_ord
     # for restaurant_location, name in nx.get_node_attributes(mapgrid, 'name').items():
     #     if name == 'RESTAURANT':
     #         coordinate = restaurant_location
-    new_time = nx.dijkstra_path_length(mapgrid, source=coordinate, target=new_delivery_point, weight='time')
-    previous_time = nx.dijkstra_path_length(mapgrid, source=coordinate, target=previous_order_location, weight='time')
+    new_time = nx.dijkstra_path_length(mapgrid, source=coordinate, target=new_delivery_point, weight='time') + weather_effect()
+    previous_time = nx.dijkstra_path_length(mapgrid, source=coordinate, target=previous_order_location, weight='time') + weather_effect()
     time_two_destination = nx.dijkstra_path_length(mapgrid, source=previous_order_location, target=new_delivery_point,
-                                                   weight='time')
+                                                   weight='time') + weather_effect()
     if (new_time + previous_time) * 2 > deliver_wait_time(queue_count) + new_time + time_two_destination + previous_time:
         return {new_delivery_point: 'W'}  # for 'wait'
     else:
