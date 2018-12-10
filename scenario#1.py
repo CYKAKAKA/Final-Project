@@ -99,6 +99,42 @@ def deliver_wait_time(queue_count):
     return wait_time
 
 
+def weather_effect():
+    """
+    :return: a random number affects on total duration
+    """
+    possible_rain_types = np.random.multinomial(100, [0.109589, 0.112329, 0.208219, 0.569863])
+    possible_snow_types = np.random.multinomial(100, [0.010959, 0.041096, 0.019178, 0.928767])
+    rain_type = ['HR', 'LR', 'MR', 'NR']
+    snow_type = ['HS', 'LS', 'MS', 'NS']
+    rain_list, snow_list = [], []
+    for i in list(range(len(possible_rain_types))):
+        rain_list += [rain_type[i]] * possible_rain_types[i]
+    for i in list(range(len(possible_snow_types))):
+        snow_list += [snow_type[i]] * possible_snow_types[i]
+    too_cold_list = np.random.binomial(1, 0.027397, 100)
+    pick = int(np.random.randint(0, 100, 1))
+    rain_effect = rain_list[pick]
+    snow_effect = snow_list[pick]
+    too_cold_effect = int(too_cold_list[pick])
+    effect_result = 0
+    if rain_effect == 'HR':
+        effect_result += 15
+    elif rain_effect == 'LR':
+        effect_result += 5
+    elif rain_effect == 'MR':
+        effect_result += 10
+    if snow_effect == 'HS':
+        effect_result += 20
+    elif snow_effect == 'LS':
+        effect_result += 10
+    elif snow_effect == 'MS':
+        effect_result += 15
+    if too_cold_effect == 1:
+        effect_result += 5
+    return effect_result
+
+
 def judgement(mapgrid, coordinate, new_delivery_point, queue_count, previous_order_location):
     """
     Depend on the time that cost on wait and traffic to new delivery point, this function tells if we should wait or
@@ -134,7 +170,7 @@ if __name__ == '__main__':
     x, y = int(previous_loc.split(',')[0]), int(previous_loc.split(',')[1])
     previous_location = (x, y)
     restaurant_loc = (int(grid_length/2), int(grid_width/2))
-    new_map = mapping((grid_length, grid_width))
+    new_map = mapping(grid_length, grid_width)
     for repeat in range(1000):
         new_map = real_map(new_map)
         for nodes in list(new_map.nodes()):
