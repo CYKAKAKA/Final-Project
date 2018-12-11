@@ -108,7 +108,7 @@ def real_map(g) -> nx.classes.graph.Graph:
     return g
 
 
-def weather_effect():
+def weather_effect() -> int:
     """
     With the data analysis before, the possibilities of different weather conditions are calculated.
     Therefore, the weather is assigned according to the possibilities, and the effect of weather
@@ -155,19 +155,19 @@ def weather_effect():
     return effect_result
 
 
-def prep_time(order_size):
+def prep_time(order_size) -> np.ndarray:
     """
-    Return the preparation time for the order based on its size
+    Return the possible preparation times for the order based on its size
     :param order_size: size for the order
     :return: preparation time
     >>> prep = prep_time("S")
     >>> print(len(prep))
-    100
+    10000
     """
     # Check if the input order_size is right
     if order_size not in ["S", "M", "L"]:
         raise ValueError('Order size should be "S","M" or "L"')
-    preparation_time = np.random.uniform(0, 10, size=100)
+    preparation_time = np.random.uniform(0, 10, size=10000)
     if order_size == "S":
         return preparation_time
     elif order_size == "M":
