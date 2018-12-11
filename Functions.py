@@ -164,6 +164,9 @@ def prep_time(order_size):
     >>> print(len(prep))
     100
     """
+    # Check if the input order_size is right
+    if order_size not in ["S", "M", "L"]:
+        raise ValueError('Order size should be "S","M" or "L"')
     preparation_time = np.random.uniform(0, 10, size=100)
     if order_size == "S":
         return preparation_time
