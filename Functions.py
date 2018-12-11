@@ -92,10 +92,10 @@ def real_map(g) -> nx.classes.graph.Graph:
 
     >>> g = real_map(mapping(4,4))
     >>> print(type(g.edges[(0,0),(1,0)]['time']))
-    numpy.float64
+    <class 'numpy.float64'>
     """
     # Check the type of g
-    if type(g) != 'nx.classes.graph.Graph':
+    if type(g) is not nx.classes.graph.Graph:
         raise ValueError('The input is not a nx.classes.graph.Graph')
     # Assign the real-time weight to each edge
     for edge in list(g.edges):
@@ -118,10 +118,10 @@ def weather_effect():
 
     >>> extra_time = weather_effect()
     >>> print(type(extra_time))
-    int
+    <class 'int'>
     """
 
-    # These are results of data analysis from weather data of Champaign in 2017
+    # These are results of data analysis from weather data of Champaign in 2017: see the details in weather.ipynb
     possible_rain_types = np.random.multinomial(100, [0.109589, 0.112329, 0.208219, 0.569863])
     possible_snow_types = np.random.multinomial(100, [0.010959, 0.041096, 0.019178, 0.928767])
     rain_type = ['HR', 'LR', 'MR', 'NR']
@@ -160,6 +160,9 @@ def prep_time(order_size):
     Return the preparation time for the order based on its size
     :param order_size: size for the order
     :return: preparation time
+    >>> prep = prep_time("S")
+    >>> print(len(prep))
+    100
     """
     preparation_time = np.random.uniform(0, 10, size=100)
     if order_size == "S":
