@@ -1,3 +1,70 @@
+import networkx as nx
+import random
+import pylab
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+
+
+def mapping(length, width):
+    """
+    With designated length and width, this function generate a length x width grid. And define the middle point as
+    the location of restaurant.
+    :param length: The number of nodes vertically
+    :param width: The number of nodes horizontally
+    :return: A NetworkX 2D gird graph
+    """
+    G = nx.grid_2d_graph(length, width)
+    for edge in list(G.edges):
+        low = np.random.randint(1, 10)
+        high = np.random.randint(low + 1, 30)
+        likely = np.random.randint(low, high)
+        G.edges[edge[0], edge[1]]['low']=low
+        G.edges[edge[0], edge[1]]['high']=high
+        G.edges[edge[0], edge[1]]['likely']=likely
+    G.nodes[int(length / 2), int(width / 2)]['name'] = 'RESTAURANT'
+    return G
+
+
+def real_map(G):
+    for edge in list(G.edges):
+        low= G.edges[edge[0], edge[1]]['low']
+        high= G.edges[edge[0], edge[1]]['high']
+        likely=G.edges[edge[0], edge[1]]['likely']
+        distribution=mod_pert_random(low, likely, high, confidence=2)
+        number=np.random.randint(0,len(distribution))
+        G.edges[edge[0], edge[1]]['time'] = distribution[number]
+    return G
+
+
+def mod_pert_random(low, likely, high, confidence=4, samples=10000):
+    """Produce random numbers according to the 'Modified PERT'
+    distribution.
+    :param low: The lowest value expected as possible.
+    :param likely: The 'most likely' value, statistically, the mode.
+    :param high: The highest value expected as possible.
+    :param confidence: This is typically called 'lambda' in literature
+                        about the Modified PERT distribution. The value
+                        4 here matches the standard PERT curve. Higher
+                        values indicate higher confidence in the mode.
+                        Currently allows values 1-18
+    :param samples: random number size
+    Formulas from "Modified Pert Simulation" by Paulo Buchsbaum.
+    """
+    # Check minimum & maximum confidence levels to allow:
+    if confidence < 1 or confidence > 18:
+        raise ValueError('confidence value must be in range 1-18.')
+
+    mean = (low + confidence * likely + high) / (confidence + 2)
+
+    a = (mean - low) / (high - low) * (confidence + 2)
+    b = ((confidence + 1) * high - low - confidence * likely) / (high - low)
+
+    beta = np.random.beta(a, b, samples)
+    beta = beta * (high - low) + low
+    return beta
+
+
 class Order:
     """
 
@@ -65,7 +132,7 @@ class Order:
            i: a randomly generated number
         """
 
-        order_location = list(real_map(mapping(length,width)).nodes)[i]
+        order_location = list(real_map(mapping(length, width)).nodes)[i]
 
         self.order_location = order_location
 
@@ -78,7 +145,7 @@ class Order:
            mapgrid (int): the map
         """
 
-        delivery_time = nx.dijkstra_path_length(mapgrid, source=restaurant_loc, target=self.order_Location,
+        delivery_time = nx.dijkstra_path_length(mapgrid, source=restaurant_loc, target=self.order_location,
                                                 weight='time')
 
         self.delivery_time = delivery_time
@@ -153,3 +220,65 @@ class DeliveryMan:
             delivery_time (int): The time he spend on his way back to the restaurant
         """
         self.arrived_time = delivered_time + delivery_time
+
+
+if __name__ == '__main__':
+    A = 1
+    B = 720
+    COUNT = 100
+    resultList = random.sample(range(A, B + 1), COUNT)
+    for k in [1, 2, 3, 4, 5]:
+        for repeat in range(10000):
+            revenue = 0
+            successful_times = 0
+            order = []
+            delivery_team = []
+            delivery_man_timelist = []
+            revenue_list = []
+            cost = k * 20 * 12
+            successful_list = []
+            for i in range(k):
+                delivery_team.append(DeliveryMan(i + 1))
+            for i in range(100):
+                if i < k - 1:
+                    delivered_time = order[i].time + order[i].preparation_time + order[i].delivery_time + 0
+                    order[i].set_delivered_time(delivered_time)
+                    delivery_team[i].set_arrived_time(order[i].delivered_time, order[i].delivery_time)
+                    order[i].set_mark(i + 1)
+                    delivery_man_timelist.append(delivery_team[i].arrived_time)
+                if i >= k:
+                    mark = delivery_man_timelist.index(min(delivery_man_timelist))
+                    arrived_time_of_deliverman = delivery_team[mark].arrived_time
+                    if arrived_time_of_deliverman < order[i].time + order[i].preparation_time:
+
+                        delivered_time = order[i].time + order[i].preparation_time + order[i].delivery_time
+                    else:
+                        delivered_time = arrived_time_of_deliverman + order[i].delivery_time
+                    order[i].set_status()
+                    order[i].set_delivered_time(delivered_time)
+                    if order[i].status == 'processing':
+                        arrived_time_of_deliverman = delivered_time + order[i].delivery_time
+                        order[i].set_mark(mark + 1)
+                    else:
+                        for k in range(i)[::-1]:
+                            if order[k].status == 'processing':
+                                arrived_time_of_deliverman = order[k].delivered_time + order[k].delivery_time
+                                break
+                    delivery_team[mark].arrived_time = arrived_time_of_deliverman
+                    delivery_man_timelist[mark] = delivery_team[mark].arrived_time
+            for i in range(100):
+                if order[i].status == 'processing':
+                    successful_times += 1
+                    if order[i].size == 1:
+                        revenue += 10
+                    if order[i].size == 2:
+                        revenue += 20
+                    if order[i].size == 3:
+                        revenue += 30
+                else:
+                    continue
+            successful_list.append(successful_times)
+            revenue_list.append(revenue)
+
+    print(np.mean(revenue_list))
+    print(np.mean(successful_times)/100)
