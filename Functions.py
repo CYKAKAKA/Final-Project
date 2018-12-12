@@ -25,6 +25,7 @@ def mod_pert_random(low, likely, high, confidence=4, samples=10000) -> np.ndarra
                         values indicate higher confidence in the mode.
                         Currently allows values 1-18
     :param samples: random number size
+    :return: An array of random numbers
 
     Formulas from "Modified Pert Simulation" by Paulo Buchsbaum.
 
@@ -51,11 +52,10 @@ def mod_pert_random(low, likely, high, confidence=4, samples=10000) -> np.ndarra
     return beta
 
 
-def mapping(length, width) -> nx.Graph:
+def mapping(length, width) -> nx.classes.graph.Graph:
     """
     With designated length and width, this function generate a length x width grid and
-    assign each edge a low, likely and high weight. The function also define the middle
-    point as the location of restaurant.
+    assign each edge a low, likely and high weight.
 
     :param length: The number of nodes vertically
     :param width: The number of nodes horizontally
@@ -68,7 +68,7 @@ def mapping(length, width) -> nx.Graph:
 
     # Check if the length and width are not normal
     if length <= 0 or width <= 0:
-        raise ValueError('The length and the width of the grid must not be less than 0')
+        raise ValueError('The length and the width of the grid must not be below 0')
     g = nx.grid_2d_graph(length, width)
     # Assign each edge with low, high and likely value
     for edge in list(g.edges):
@@ -78,24 +78,23 @@ def mapping(length, width) -> nx.Graph:
         g.edges[edge[0], edge[1]]['low'] = low
         g.edges[edge[0], edge[1]]['high'] = high
         g.edges[edge[0], edge[1]]['likely'] = likely
-    g.nodes[int(length / 2), int(width / 2)]['name'] = 'RESTAURANT'
     return g
 
 
-def real_map(g) -> nx.Graph:
+def real_map(g) -> nx.classes.graph.Graph:
     """
     With the generated graph, this function assign a real-time weight, which represents travel time according to
     the 'Modified PERT' distribution.
 
-    :param g: the generated graph
-    :return: the new graph with travel time at this moment
+    :param g: The generated graph
+    :return: The new graph with travel time at this moment
 
     >>> g = real_map(mapping(4,4))
     >>> print(type(g.edges[(0,0),(1,0)]['time']))
     <class 'numpy.float64'>
     """
     # Check the type of g
-    if type(g) is not nx.Graph:
+    if type(g) is not nx.classes.graph.Graph:
         raise ValueError('The input is not a nx.classes.graph.Graph')
     # Assign the real-time weight to each edge
     for edge in list(g.edges):
@@ -113,12 +112,14 @@ def weather_effect() -> int:
     With the data analysis before, the possibilities of different weather conditions are calculated.
     Therefore, the weather is assigned according to the possibilities, and the effect of weather
     is evaluated to extra time.
-    :return: extra time depending on the weather
+
+    :return: Extra time depending on the weather
 
     >>> extra_time = weather_effect()
     >>> print(type(extra_time))
     <class 'int'>
     """
+
     # These are results of data analysis from weather data of Champaign in 2017: see the details in weather.ipynb
     possible_rain_types = np.random.multinomial(100, [0.109589, 0.112329, 0.208219, 0.569863])
     possible_snow_types = np.random.multinomial(100, [0.010959, 0.041096, 0.019178, 0.928767])
@@ -156,8 +157,8 @@ def weather_effect() -> int:
 def prep_time(order_size) -> np.ndarray:
     """
     Return the possible preparation times for the order based on its size
-    :param order_size: size for the order
-    :return: preparation time
+    :param order_size: Size for the order
+    :return: An array of possible preparation times
     >>> prep = prep_time("S")
     >>> print(len(prep))
     10000
