@@ -13,7 +13,7 @@ import networkx as nx
 import numpy as np
 
 
-def mod_pert_random(low, likely, high, confidence=4, samples=10000) -> np.ndarray:
+def mod_pert_random(low, likely, high, confidence=4, samples=1000) -> np.ndarray:
     """Produce random numbers according to the 'Modified PERT' distribution.
 
     :param low: The lowest value expected as possible.
@@ -31,7 +31,7 @@ def mod_pert_random(low, likely, high, confidence=4, samples=10000) -> np.ndarra
 
     >>> beta = mod_pert_random(2,4,6)
     >>> print(len(beta))
-    10000
+    1000
     """
     # Check minimum & maximum confidence levels to allow:
     if confidence < 1 or confidence > 18:
@@ -69,11 +69,13 @@ def mapping(length, width) -> nx.classes.graph.Graph:
     # Check if the length and width are not normal
     if length <= 0 or width <= 0:
         raise ValueError('The length and the width of the grid must not be below 0')
+    if type(length) is not int or type(width) is not int:
+        raise ValueError('The length and width must be integer')
     g = nx.grid_2d_graph(length, width)
     # Assign each edge with low, high and likely value
     for edge in list(g.edges):
-        low = np.random.randint(1, 10)
-        high = np.random.randint(low + 1, 30)
+        low = np.random.randint(5, 15)
+        high = np.random.randint(low + 1, 20)
         likely = np.random.randint(low, high)
         g.edges[edge[0], edge[1]]['low'] = low
         g.edges[edge[0], edge[1]]['high'] = high
