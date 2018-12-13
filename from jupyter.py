@@ -1,7 +1,5 @@
 import networkx as nx
 import random
-import pylab
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
@@ -72,40 +70,40 @@ class Order:
 
     Attributes:
         time (int): The time when the restaurant receive an order.
-        size (int): 1 stands for small; 2 stands for medium and 3 stands for large.
+        order_size (int): 1 stands for small; 2 stands for medium and 3 stands for large.
         preparation_time (double): The time need for preparation
         order_location (tuple): The coordinate of the location of the order
         delivery_time (double): The time spend on the way to destination
         supposed_delivered_time(int): The time when the order should be delivered
         delivered_time (double): The time when the order arrives
         status (string): to define whether the order is cancelled
-        mark (int): The job number of delivery man who delivers the order
+        delivery_man_number (int): The job number of delivery man who delivers the order
 
     """
 
-    def __init__(self, time, size, preparation_time=0, order_location=(0, 1), delivery_time=0,
-                 supposed_delivered_time=0, delivered_time=0, status=0, mark=0):
+    def __init__(self, time, order_size, preparation_time=0, order_location=(1, 1), delivery_time=0,
+                 supposed_delivered_time=0, order_delivered_time=0, status=0, delivery_man_number=0):
 
         """
         The constructor for ComplexNumber class.
 
         Parameters:
             time (int): The time when the restaurant receive an order.
-            size (int): 1 stands for small; 2 stands for medium and 3 stands for large.
+            order_size (int): 1 stands for small; 2 stands for medium and 3 stands for large.
             preparation_time (double): The time need for preparation
             order_location (tuple): The coordinate of the location of the order
             delivery_time (double): The time spend on the way to destination
             supposed_delivered_time(int): The time when the order should be delivered
-            delivered_time (double): The time when the order arrives
+            order_delivered_time (double): The time when the order arrives
             status (string): to define whether the order is cancelled
-            mark (int): The job number of delivery man who delivers the order
+            delivery_man_number (int): The job number of delivery man who delivers the order
         """
         self.time = time
-        self.size = size
+        self.order_size = order_size
         self.preparation_time = preparation_time
         self.order_location = order_location
-        self.mark = mark
-        self.delivered_time = delivered_time
+        self.delivery_man_number = delivery_man_number
+        self.delivered_time = order_delivered_time
         self.delivery_time = delivery_time
         self.supposed_delivered_time = supposed_delivered_time
         self.status = status
@@ -116,54 +114,45 @@ class Order:
 
         """
         self.preparation_time = 10
-        if self.size == 1:
+        if self.order_size == 1:
             pass
-        elif self.size == 2:
+        elif self.order_size == 2:
             self.preparation_time *= 1.5
         else:
             self.preparation_time *= 2
 
-    def set_order_location(self, length, width, i):
+    def set_order_location(self, x, y):
         """
         The function is to set the order location for an Order
 
         Parameters:
-           length (int)：the length of the map
-           width (int): the width of the map
-           i: a randomly generated number
+           x (int)：the x coordinate of order location
+           y (int): the y coordinate of order location
         """
 
-        order_location = list(real_map(mapping(length, width)).nodes)[i]
+        self.order_location = (int(x), int(y))
 
-        self.order_location = order_location
-
-    def set_delivery_time(self, restaurant_loc, mapgrid):
+    def set_delivery_time(self, restaurant_location, mapgrid):
         """
         The function is to set the delivery time for an Order
 
         Parameters:
-           restaurant_loc (int)：the coordinate of the restaurant
+           restaurant_location (int)：the coordinate of the restaurant
            mapgrid (int): the map
         """
-
-        delivery_time = nx.dijkstra_path_length(mapgrid, source=restaurant_loc, target=self.order_location,
-                                                weight='time')
-
-        self.delivery_time = delivery_time
+        self.delivery_time = nx.dijkstra_path_length(mapgrid, source=restaurant_location, target=self.order_location,
+                                                     weight='time')
 
     def set_supposed_delivered_time(self):
         """
         The function is to set the supposed delivered time for an Order
 
         """
+        self.supposed_delivered_time = self.time + 90
 
-        supposed_delivered_time = self.time + 100
+    def set_delivered_time(self, order_delivered_time):
 
-        self.supposed_delivered_time = supposed_delivered_time
-
-    def set_delivered_time(self, delivered_time):
-
-        self.delivered_time = delivered_time
+        self.delivered_time = order_delivered_time
 
     def set_status(self):
         """
@@ -172,21 +161,20 @@ class Order:
         Parameters:
 
         """
-
         if self.delivered_time < self.supposed_delivered_time:
             self.status = 'processing'
         else:
             self.status = 'cancelled'
 
-    def set_mark(self, mark):
+    def set_mark(self, delivery_man_number):
         """
         The function is to set mark for an Order
 
         Parameters:
-            mark (int): the job number of a delivery man
+            delivery_man_number (int): the job number of a delivery man
         """
 
-        self.mark = mark
+        self.delivery_man_number = delivery_man_number
 
 
 class DeliveryMan:
@@ -212,99 +200,96 @@ class DeliveryMan:
         self.job_number = job_number
         self.arrived_time = arrived_time
 
-    def set_arrived_time(self, delivered_time, delivery_time):
+    def set_arrived_time(self, order_delivered_time, delivery_time):
         """
         The function is to set mark for an Order
 
         Parameters:
-            delivered_time (int): The time when his last order is delivered
+            order_delivered_time (int): The time when his last order is delivered
             delivery_time (int): The time he spend on his way back to the restaurant
         """
-        self.arrived_time = delivered_time + delivery_time
+        self.arrived_time = order_delivered_time + delivery_time
 
 
 if __name__ == '__main__':
-    A = 1
-    B = 720  # 8:00 am to 8 :00pm
-    COUNT = 100  # total order number
-    resultList = random.sample(range(A, B + 1), COUNT)
+    grid_length = int(input('Please input the length of the grid:\n'))
+    grid_width = int(input('Please input the width of the grid:\n'))
+    order_quantity = int(input('Please input the how many orders can be received from 8am to 8pm per day:\n'))
     order = []
-    number = sorted(resultList)
-    new_map = real_map(mapping(2, 2))
-    map_size = len(list(real_map(mapping(2, 2)).nodes))
+    new_map = real_map(mapping(grid_length, grid_width))
+    map_size = len(list(real_map(mapping(grid_length, grid_width)).nodes))
+    profit_dic = {}
+    successful_dic = {}
+    restaurant_loc = (int(grid_length / 2), int(grid_width / 2))  # set restaurant location
+    for k in [1, 2, 3, 4, 5]:
+        revenue_list = []
+        cost = k * 15 * 12
+        successful_list = []
+        for repeat in range(1000):
+            number = sorted(random.sample(range(1, 720 + 1), order_quantity))
+            revenue = 0
+            successful_times = 0
+            for i in range(order_quantity):
+                size = random.sample(range(1, 4), 1)[0]
+                x_coordinate = np.random.randint(0, grid_length, size=1)
+                y_coordinate = np.random.randint(0, grid_width, size=1)
+                # order_location_index  is used to select a random node from the real_map
+                order_location_index = random.sample(range(map_size), 1)[0]
+                order.append(Order(number[i], size))
+                order[i].set_preparation_time()
+                order[i].set_order_location(x_coordinate, y_coordinate)
+                order[i].set_delivery_time(restaurant_loc, new_map)
+                order[i].set_supposed_delivered_time()
+            delivery_team = []
+            delivery_man_time_list = []
+            # (2)stands for the number of delivery man
+            # create objects
+            for i in range(k):
+                delivery_team.append(DeliveryMan(i + 1))
+            for i in range(order_quantity):
+                if i <= k - 1:
+                    delivered_time = order[i].time + order[i].preparation_time + order[i].delivery_time + 0
+                    order[i].set_delivered_time(delivered_time)
+                    delivery_team[i].set_arrived_time(order[i].delivered_time, order[i].delivery_time)
+                    order[i].set_mark(i + 1)
+                    delivery_man_time_list.append(delivery_team[i].arrived_time)
+                if i > k:
+                    mark = delivery_man_time_list.index(min(delivery_man_time_list))
+                    arrived_time_of_delivery_man = delivery_team[mark].arrived_time
+                    if arrived_time_of_delivery_man < order[i].time + order[i].preparation_time:
 
-    # define the location of a resturant
-    restaurant_loc = (int(2 / 2), int(2 / 2))
+                        delivered_time = order[i].time + order[i].preparation_time + order[i].delivery_time
+                    else:
+                        delivered_time = arrived_time_of_delivery_man + order[i].delivery_time
 
-    for i in range(100):
-        size = random.sample(range(1, 4), 1)[0]
-        # order_location_index  is used to select a random node from the real_map
-        order_location_index = random.sample(range(map_size), 1)[0]
+                    order[i].set_status()
+                    order[i].set_delivered_time(delivered_time)
 
-        order.append(Order(number[i], size))
+                    if order[i].status == 'processing':
+                        arrived_time_of_delivery_man = delivered_time + order[i].delivery_time
+                        order[i].set_mark(mark + 1)
 
-        order[i].set_preparation_time()
-        order[i].set_order_location(2, 2, order_location_index)
-        order[i].set_delivery_time(restaurant_loc, new_map)
-        order[i].set_supposed_delivered_time()
-
-    k = 3
-    delivery_team = []
-    delivery_man_timelist = []
-    # (2)stands for the number of delivery man
-    # create objects
-    for i in range(k):
-        delivery_team.append(DeliveryMan(i + 1))
-
-    for i in range(100):
-        if i <= k - 1:
-            delivered_time = order[i].time + order[i].preparation_time + order[i].delivery_time + 0
-            order[i].set_delivered_time(delivered_time)
-            delivery_team[i].set_arrived_time(order[i].delivered_time, order[i].delivery_time)
-            order[i].set_mark(i + 1)
-            delivery_man_timelist.append(delivery_team[i].arrived_time)
-        if i >= k:
-            mark = delivery_man_timelist.index(min(delivery_man_timelist))
-            #         print(mark)
-            #         if delivery_team[0].arrived_time >= delivery_team[1].arrived_time:
-            #             mark = 1
-
-            #         else:
-            #             mark = 0
-            arrived_time_of_deliverman = delivery_team[mark].arrived_time
-            if arrived_time_of_deliverman < order[i].time + order[i].preparation_time:
-
-                delivered_time = order[i].time + order[i].preparation_time + order[i].delivery_time
-            else:
-                delivered_time = arrived_time_of_deliverman + order[i].delivery_time
-
-            order[i].set_status()
-            order[i].set_delivered_time(delivered_time)
-
-            if order[i].status == 'processing':
-                arrived_time_of_deliverman = delivered_time + order[i].delivery_time
-                order[i].set_mark(mark + 1)
-
-            else:
-                for k in range(i)[::-1]:
-                    if order[k].status == 'processing':
-                        arrived_time_of_deliverman = order[k].delivered_time + order[k].delivery_time
-                        break
-            delivery_team[mark].arrived_time = arrived_time_of_deliverman
-            delivery_man_timelist[mark] = delivery_team[mark].arrived_time
-    status_list = []
-    time_list = []
-    delivered_list = []
-    supposed_list = []
-    mark_list = []
-    for i in range(100):
-        status_list.append(order[i].status)
-        delivered_list.append(order[i].delivered_time)
-        supposed_list.append(order[i].supposed_delivered_time)
-        time_list.append(order[i].time)
-        mark_list.append(order[i].mark)
-
-    result = pd.DataFrame(
-        {'time': time_list, 'delivered': delivered_list, 'supposed': supposed_list, 'status': status_list,
-         'delivery_man': mark_list})
-    print(result)
+                    else:
+                        for j in range(i)[::-1]:
+                            if order[j].status == 'processing':
+                                arrived_time_of_delivery_man = order[j].delivered_time + order[j].delivery_time
+                                break
+                    delivery_team[mark].arrived_time = arrived_time_of_delivery_man
+                    delivery_man_time_list[mark] = delivery_team[mark].arrived_time
+                # for i in range(100):
+                if order[i].status == 'processing':
+                    successful_times += 1
+                    if order[i].order_size == 1:
+                        revenue += 10
+                    if order[i].order_size == 2:
+                        revenue += 20
+                    if order[i].order_size == 3:
+                        revenue += 30
+                else:
+                    continue
+            revenue_list.append(revenue)
+            successful_list.append(successful_times)
+        successful_dic[k] = np.mean(successful_list) / order_quantity
+        profit_dic[k] = np.mean(revenue_list) - cost
+    print(profit_dic)
+    print(successful_dic)
