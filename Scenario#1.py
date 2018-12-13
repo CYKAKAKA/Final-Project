@@ -5,7 +5,6 @@ we should wait for preparation of the food and deliver these two together or del
 and then come back for the new?
 """
 
-
 import Functions as fun
 import networkx as nx
 import numpy as np
