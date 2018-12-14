@@ -10,7 +10,7 @@ Yekai Chen, Xiner Liu, Yue Xian
 
 For a resturant, it's increasingly necessary to have a delivery service. But the time of delivery time is hard to predict thus it's also hard to make management decision according to it. In this Monte Carlo Simulation, we'd like to help the manager to make decisions in two certain scenarios.
 
-In our scenarios, we assume that the restaurant is at the center of a gird. The nodes in the grid represent the possible customer locations and the edges between nodes represent the roads with the weights represent the travel time.
+In our scenarios, we assume that the restaurant is at the center of a gird. The nodes in the grid represent the possible customer locations and the edges between nodes represent the roads with the weights representing the travel time.
 
 In the restaurant, there are three different sizes of food (small, medium, large). Each is of different price and different preparation time.
 
@@ -70,6 +70,7 @@ Therefore, how many delivery men should be employed to reach the highest profit,
   Input the map scale and the number of order per day. Then the program will form a panda DataFrame that indicates different number of delivery men, the profit and the order successful rate.
 
 ## All Sources Used:
+
 1. Weather Data: https://www.isws.illinois.edu/statecli/urbana/urbana-monthly-2017.htm
 2. NetworkX: https://networkx.github.io/documentation/stable/tutorial.html
 3. BQPlot: https://bqplot.readthedocs.io/en/latest/
