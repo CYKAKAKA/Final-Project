@@ -19,8 +19,8 @@ In the restaurant, there are three different sizes of food (small, medium, large
   
 - Scenario 2: 
   - The restaurant would receive a fixed number of orders throughout a day(8:00 am to 8:00 pm, 12 hours).
-  - If the delivery time is more than 90 minutes, customer would cancel the order.
-  - Profit = Total order revenue - number of the delivery man x 15(dollars/hour) x12 (hours).
+  - If the delivery time is more than 90 minutes, customers would cancel the order.
+  - Profit = Total order revenue - number of the delivery man x 15(dollars/hour) x 12 (hours).
   - Therefore, how many delivery men should be employed to reach the highest profit, and what is the relationship between the profit and  the success order rate.
 
 ## Simulation's variables of uncertainty
