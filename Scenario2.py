@@ -216,6 +216,7 @@ if __name__ == '__main__':
                     order[i].set_delivered_time(delivered_time)
                     delivery_team[i].set_arrived_time(order[i].delivered_time, order[i].delivery_time)
                     order[i].set_mark(i + 1)
+                    # set a list that save the arrival time of each delivery man
                     delivery_man_time_list.append(delivery_team[i].arrived_time)
                 if i > k:  # difference the later orders for each delivery man
                     # choose the first arrived delivery man
@@ -228,17 +229,18 @@ if __name__ == '__main__':
 
                     order[i].set_status()
                     order[i].set_delivered_time(delivered_time)
-
+                    # the arrival time of a delivery man is decided by the order he just delivered
                     if order[i].status == 'processing':
                         arrived_time_of_delivery_man = delivered_time + order[i].delivery_time
                         order[i].set_mark(mark + 1)
-
                     else:
                         for j in range(i)[::-1]:
                             if order[j].status == 'processing':
                                 arrived_time_of_delivery_man = order[j].delivered_time + order[j].delivery_time
                                 break
+                    # use the 'mark' to update the new arrival time of a delivery man
                     delivery_team[mark].arrived_time = arrived_time_of_delivery_man
+                    # update the "arrived time" attribute of a delivery man
                     delivery_man_time_list[mark] = delivery_team[mark].arrived_time
 
                 if order[i].status == 'processing':
