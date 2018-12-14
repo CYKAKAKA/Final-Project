@@ -8,6 +8,8 @@ Yekai Chen, Xiner Liu, Yue Xian
 
 # Monte Carlo Simulation Scenario & Purpose: 
 For a resturant, it's increasingly necessary to have a delivery service. But the time of delivery time is hard to predict thus it's also hard to make management decision according to it. In this Monte Carlo Simulation, we'd like to help the manager to make decisions in two certain scenarios.
+In our scenarios, we assume that the restaurant is at the center of a gird. The nodes in the grid represent the possible customer locations and the edges between nodes represent the roads with the weights represent the travel time.
+In the restaurant, there are three different sizes of food (small, medium, large). Each is of different price and different preparation time.
 - Scenario 1: 
   One order is ready to be delivered and another order come in right now. In what locations of the new customer we should wait for preparation of the food and deliver these two together or deliver the ready order right now and then come back for the new?
 - Scenario 2: 
@@ -33,15 +35,18 @@ Therefore, how many delivery men should be employed to reach the highest profit,
 ## Hypothesis or hypotheses before running the simulation:
 - Scenario 1:
   - The further from resturant the new order is, the more likely to wait. 
-  - The further from the previous order is, the more likely to deliver now.
+  - The further from the previous order the new order is, the more likely to deliver now.
 - Scenario 2:
   - As the number of delivery men increases, the successful delivery rate will increase, so as the profit. However, after a certain number, the successful delivery rate will be stable, and the profit will start to drop.
 
 ## Analytical Summary of your findings: (e.g. Did you adjust the scenario based on previous simulation outcomes?  What are the management decisions one could make from your simulation's output, etc.)
 - Scenario 1: 
-  The decision depend on the distance from new order to previous order more than the one between restaurant and new order. If the location of new order is closer to the previous order, it's more likely to wait and deliver them together. 
+  The decision depend on the distance from the new order to the previous order more than the distance between the restaurant and the new order. If the location of the new order is closer to the previous order, it's more time-saving to wait and deliver them together. 
 - Scenario 2:
-  Based on the average number of orders a restaurant might receive a day, a manager of the restaurant could decide the number of delivery man they should hire to maximize profit. In this case, we assume the total number of order is 100 and according to the results, we could conclude that this restaurant should employ 4 delivery men.
+  Based on the average number of orders a restaurant might receive a day, a manager of the restaurant could decide the number of delivery man they should hire to maximize the profit. In this case, we assume the total number of order is 100 and according to the results, we could conclude that this restaurant should employ 4 delivery men.
+  Also, as our hypothesis, as the number of delivery men increases, the successful delivery rate will increase at first, then become stable. The profit will thus generally increase at first, reach the peak, then decrease.
+  During the simulation, we find that if the road condition is too bad, which means it will take a long time to deliver, the stable successful delivery rate will be really low. This is because the travel time between the restaurant and the customer location is more than 90 minutes and therefore no matter how many delivery men there are, the order can not be delivered in time.
+  
   
 ## Instructions on how to use the program:
 - Scenario 1:
