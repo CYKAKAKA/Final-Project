@@ -60,7 +60,7 @@ In the restaurant, there are three different sizes of food (small, medium, large
   
   Also, as our hypothesis, as the number of delivery men increases, the successful delivery rate will increase at first, then become stable. The profit will thus generally increase at first, reach the peak, then decrease.
   
-  During the simulation, we find that if the road condition is too bad, which means it will take a long time to deliver, the stable successful delivery rate will be really low. This is because the travel time between the restaurant and the customer location is more than 90 minutes and therefore no matter how many delivery men there are, the order can not be delivered in time.
+  During the simulation, we find that if the road condition is too bad, which means it will take a long time to deliver, the stable successful delivery rate will be really low. This is because the travel time between the restaurant and the customer location is already more than 90 minutes and therefore no matter how many delivery men there are, the order cannot be delivered in time.
   
   
 ## Instructions on how to use the program:
