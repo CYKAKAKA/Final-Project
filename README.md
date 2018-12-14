@@ -15,7 +15,7 @@ In our scenarios, we assume that the restaurant is at the center of a gird. The 
 In the restaurant, there are three different sizes of food (small, medium, large). Each is of different price and different preparation time.
 
 - Scenario 1: 
-  - One order is ready to be delivered and another order come in right now. In what locations of the new customer we should wait for preparation of the food and deliver these two together or deliver the ready order right now and then come back for the new?
+  - One order is ready to be delivered and another order comes in right now. In what locations of the new order we should wait for preparation of the food and deliver these two together or deliver the ready order right now and then come back for the new?
   
 - Scenario 2: 
   - The restaurant would receive a fixed number of orders throughout a day(8:00 am to 8:00 pm, 12 hours).
