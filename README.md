@@ -51,7 +51,7 @@ In the restaurant, there are three different sizes of food (small, medium, large
 ## Analytical Summary of your findings: (e.g. Did you adjust the scenario based on previous simulation outcomes?  What are the management decisions one could make from your simulation's output, etc.)
 
 - Scenario 1: 
-  The decision depend on the distance from the new order to the previous order more than the distance between the restaurant and the new order. If the location of the new order is closer to the previous order, it's more time-saving to wait and deliver them together. 
+  The decision depends on the distance from the new order to the previous order more than the distance between the restaurant and the new order. If the location of the new order is closer to the previous order, it's more time-saving to wait and deliver them together. 
   
 - Scenario 2:
   Based on the average number of orders a restaurant might receive a day, a manager of the restaurant could decide the number of delivery man they should hire to maximize the profit. In this case, we assume the total number of order is 100 and according to the results, we could conclude that this restaurant should employ 4 delivery men.
