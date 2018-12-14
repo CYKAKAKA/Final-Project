@@ -1,66 +1,18 @@
+"""
+Scenario#2
+The restaurant would receive a fixed number of orders through out a day (8:00 am to 8:00 pm, 12 hours).
+If the delivery time is more than 90 minutes, customer would cancel the order.
+Profit = Total order revenue - number of the delivery man x 15(dollars/hour) x12 (hours)
+Therefore, how many delivery man should be employed to reach the highest profit, and what is the
+relationship between the profit and the success order rate.
+"""
+
+
 import networkx as nx
 import random
 import numpy as np
+import Functions as fun
 import pandas as pd
-
-
-def mapping(length, width):
-    """
-    With designated length and width, this function generate a length x width grid. And define the middle point as
-    the location of restaurant.
-    :param length: The number of nodes vertically
-    :param width: The number of nodes horizontally
-    :return: A NetworkX 2D gird graph
-    """
-    G = nx.grid_2d_graph(length, width)
-    for edge in list(G.edges):
-        low = np.random.randint(1, 10)
-        high = np.random.randint(low + 1, 30)
-        likely = np.random.randint(low, high)
-        G.edges[edge[0], edge[1]]['low'] = low
-        G.edges[edge[0], edge[1]]['high'] = high
-        G.edges[edge[0], edge[1]]['likely'] = likely
-    G.nodes[int(length / 2), int(width / 2)]['name'] = 'RESTAURANT'
-    return G
-
-
-def real_map(G):
-    for edge in list(G.edges):
-        low = G.edges[edge[0], edge[1]]['low']
-        high = G.edges[edge[0], edge[1]]['high']
-        likely = G.edges[edge[0], edge[1]]['likely']
-        distribution = mod_pert_random(low, likely, high, confidence=2)
-        number = np.random.randint(0, len(distribution))
-        G.edges[edge[0], edge[1]]['time'] = distribution[number]
-    return G
-
-
-def mod_pert_random(low, likely, high, confidence=4, samples=10000):
-    """Produce random numbers according to the 'Modified PERT'
-    distribution.
-    :param low: The lowest value expected as possible.
-    :param likely: The 'most likely' value, statistically, the mode.
-    :param high: The highest value expected as possible.
-    :param confidence: This is typically called 'lambda' in literature
-                        about the Modified PERT distribution. The value
-                        4 here matches the standard PERT curve. Higher
-                        values indicate higher confidence in the mode.
-                        Currently allows values 1-18
-    :param samples: random number size
-    Formulas from "Modified Pert Simulation" by Paulo Buchsbaum.
-    """
-    # Check minimum & maximum confidence levels to allow:
-    if confidence < 1 or confidence > 18:
-        raise ValueError('confidence value must be in range 1-18.')
-
-    mean = (low + confidence * likely + high) / (confidence + 2)
-
-    a = (mean - low) / (high - low) * (confidence + 2)
-    b = ((confidence + 1) * high - low - confidence * likely) / (high - low)
-
-    beta = np.random.beta(a, b, samples)
-    beta = beta * (high - low) + low
-    return beta
 
 
 class Order:
@@ -113,7 +65,8 @@ class Order:
         The function is to set the preparation time for an Order
 
         """
-        self.preparation_time = 10
+        self.preparation_time = random.choice(np.random.uniform(0, 10, size=1000))
+        # 1 means small order, 2 means medium oder, else means large order
         if self.order_size == 1:
             pass
         elif self.order_size == 2:
@@ -145,9 +98,10 @@ class Order:
 
     def set_supposed_delivered_time(self):
         """
-        The function is to set the supposed delivered time for an Order
+        The function is to set the supposed delivered time for an order
 
         """
+        # Customer will wait for no more than 90 minutes, then will cancel the order
         self.supposed_delivered_time = self.time + 90
 
     def set_delivered_time(self, order_delivered_time):
@@ -212,29 +166,40 @@ class DeliveryMan:
 
 
 if __name__ == '__main__':
-    grid_length = int(input('Please input the length of the grid:\n'))
-    grid_width = int(input('Please input the width of the grid:\n'))
-    order_quantity = int(input('Please input the how many orders can be received from 8am to 8pm per day:\n'))
+    while True:
+        try:
+            grid_length = int(input('Please input the length of the grid:\n'))
+            grid_width = int(input('Please input the width of the grid:\n'))
+            order_quantity = int(input('Please input the how many orders can be received from 8am to 8pm per day:\n'))
+        except ValueError:
+            print('Length, width and orders number must all be integers')
+        else:
+            break
     order = []
-    new_map = real_map(mapping(grid_length, grid_width))
-    map_size = len(list(real_map(mapping(grid_length, grid_width)).nodes))
+    new_map = fun.real_map(fun.mapping(grid_length, grid_width))
+    map_size = len(list(new_map.nodes))
     profit_dic = {}
     successful_dic = {}
-    restaurant_loc = (int(grid_length / 2), int(grid_width / 2))  # set restaurant location
-    for k in [1, 2, 3, 4, 5]:
+    # Set restaurant location
+    restaurant_loc = (int(grid_length / 2), int(grid_width / 2))
+    # The number of delivery man
+    for k in [1, 2, 3, 4, 5, 6, 7, 8]:
         revenue_list = []
+        # Cost = the number of delivery man x 15 (dollars/hour) x 12 (working hours)
         cost = k * 15 * 12
         successful_list = []
+        # Repeat 1000 times
         for repeat in range(1000):
+            # Assume the orders will equally come at any time during the working 12 hours (720 minutes)
             number = sorted(random.sample(range(1, 720 + 1), order_quantity))
             revenue = 0
             successful_times = 0
             for i in range(order_quantity):
+                # Randomly set the order size
                 size = random.sample(range(1, 4), 1)[0]
+                # Randomly set the order location
                 x_coordinate = np.random.randint(0, grid_length, size=1)
                 y_coordinate = np.random.randint(0, grid_width, size=1)
-                # order_location_index  is used to select a random node from the real_map
-                order_location_index = random.sample(range(map_size), 1)[0]
                 order.append(Order(number[i], size))
                 order[i].set_preparation_time()
                 order[i].set_order_location(x_coordinate, y_coordinate)
@@ -242,8 +207,6 @@ if __name__ == '__main__':
                 order[i].set_supposed_delivered_time()
             delivery_team = []
             delivery_man_time_list = []
-            # (2)stands for the number of delivery man
-            # create objects
             for i in range(k):
                 delivery_team.append(DeliveryMan(i + 1))
             for i in range(order_quantity):
@@ -257,7 +220,6 @@ if __name__ == '__main__':
                     mark = delivery_man_time_list.index(min(delivery_man_time_list))
                     arrived_time_of_delivery_man = delivery_team[mark].arrived_time
                     if arrived_time_of_delivery_man < order[i].time + order[i].preparation_time:
-
                         delivered_time = order[i].time + order[i].preparation_time + order[i].delivery_time
                     else:
                         delivered_time = arrived_time_of_delivery_man + order[i].delivery_time
@@ -276,20 +238,22 @@ if __name__ == '__main__':
                                 break
                     delivery_team[mark].arrived_time = arrived_time_of_delivery_man
                     delivery_man_time_list[mark] = delivery_team[mark].arrived_time
-                # for i in range(100):
+
                 if order[i].status == 'processing':
                     successful_times += 1
+                    # Set different revenue to different size of orders
                     if order[i].order_size == 1:
-                        revenue += 10
+                        revenue += 15
                     if order[i].order_size == 2:
                         revenue += 20
                     if order[i].order_size == 3:
-                        revenue += 30
+                        revenue += 25
                 else:
                     continue
             revenue_list.append(revenue)
             successful_list.append(successful_times)
         successful_dic[k] = np.mean(successful_list) / order_quantity
         profit_dic[k] = np.mean(revenue_list) - cost
-    print(profit_dic)
-    print(successful_dic)
+    result = pd.DataFrame([profit_dic, successful_dic]).T.reset_index()
+    result.columns = ['delivery man number', 'profit', 'success rate']
+    print(result)
