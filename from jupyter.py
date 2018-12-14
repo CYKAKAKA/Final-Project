@@ -91,7 +91,7 @@ class Order:
 
         Parameters:
            restaurant_location (int)：the coordinate of the restaurant
-           mapgrid (int): the map
+           mapgrid (nx.Graph): the map
         """
         self.delivery_time = nx.dijkstra_path_length(mapgrid, source=restaurant_location, target=self.order_location,
                                                      weight='time')
@@ -200,7 +200,8 @@ if __name__ == '__main__':
                 # Randomly set the order location
                 x_coordinate = np.random.randint(0, grid_length, size=1)
                 y_coordinate = np.random.randint(0, grid_width, size=1)
-                order.append(Order(number[i], size))
+                order.append(Order(number[i], size))  # set a list that includes all the orders
+                # Initialization the attributes of orders
                 order[i].set_preparation_time()
                 order[i].set_order_location(x_coordinate, y_coordinate)
                 order[i].set_delivery_time(restaurant_loc, new_map)
@@ -208,15 +209,16 @@ if __name__ == '__main__':
             delivery_team = []
             delivery_man_time_list = []
             for i in range(k):
-                delivery_team.append(DeliveryMan(i + 1))
+                delivery_team.append(DeliveryMan(i + 1))  # set a list that includes all the delivery men
             for i in range(order_quantity):
-                if i <= k - 1:
+                if i <= k - 1:  # difference the first order for each delivery man
                     delivered_time = order[i].time + order[i].preparation_time + order[i].delivery_time + 0
                     order[i].set_delivered_time(delivered_time)
                     delivery_team[i].set_arrived_time(order[i].delivered_time, order[i].delivery_time)
                     order[i].set_mark(i + 1)
                     delivery_man_time_list.append(delivery_team[i].arrived_time)
-                if i > k:
+                if i > k:  # difference the later orders for each delivery man
+                    # choose the first arrived delivery man
                     mark = delivery_man_time_list.index(min(delivery_man_time_list))
                     arrived_time_of_delivery_man = delivery_team[mark].arrived_time
                     if arrived_time_of_delivery_man < order[i].time + order[i].preparation_time:
