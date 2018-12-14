@@ -42,7 +42,7 @@ In the restaurant, there are three different sizes of food (small, medium, large
 ## Hypothesis or hypotheses before running the simulation:
 
 - Scenario 1:
-  - The further from resturant the new order is, the more likely to wait. 
+  - The further from restaurant the new order is, the more likely to wait. 
   - The further from the previous order the new order is, the more likely to deliver now.
   
 - Scenario 2:
