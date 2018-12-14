@@ -74,8 +74,8 @@ def mapping(length, width) -> nx.classes.graph.Graph:
     g = nx.grid_2d_graph(length, width)
     # Assign each edge with low, high and likely value
     for edge in list(g.edges):
-        low = np.random.randint(5, 15)
-        high = np.random.randint(low + 1, 20)
+        low = np.random.randint(1, 7)
+        high = np.random.randint(low + 1, 15)
         likely = np.random.randint(low, high)
         g.edges[edge[0], edge[1]]['low'] = low
         g.edges[edge[0], edge[1]]['high'] = high
