@@ -6,6 +6,9 @@ Delivery Service Monte Carlo Simulation
 ## Team Member(s): 
 Yekai Chen, Xiner Liu, Yue Xian
 
+## Responsibilities:
+Yue Xian : develop the major part of scenario #2
+
 # Monte Carlo Simulation Scenario & Purpose: 
 
 For a resturant, it's increasingly necessary to have a delivery service. But the time of delivery time is hard to predict thus it's also hard to make management decision according to it. In this Monte Carlo Simulation, we'd like to help the manager to make decisions in two certain scenarios.
