@@ -7,7 +7,8 @@ Delivery Service Monte Carlo Simulation
 Yekai Chen, Xiner Liu, Yue Xian
 
 ## Responsibilities:
-Yue Xian : develop the major part of scenario #2
+Yue Xian: Developing the major part of scenario #2
+Yekai Chen: Developing the most part in scenario1, brainstorming for scenario2 and warpping up.
 
 # Monte Carlo Simulation Scenario & Purpose: 
 
@@ -67,12 +68,12 @@ In the restaurant, there are three different sizes of food (small, medium, large
   
   
 ## Instructions on how to use the program:
-
-- Scenario 1:
-  Input the map scale, number of orders are waiting and the previous order location. Then the program will form a panda DataFrame that includes the probability of wait and deliver now for each node on the map. 
+### Only Scenario1.py and Scenario2.py are executable. And the Function.py is the module used in these two programs. 
+- Scenario1.py:
+  Input 'the map scale', 'number of orders are waiting' and 'the previous order location'. Then the program will form a panda DataFrame that includes the probability of wait and deliver now for each node on the map. 
   
-- Scenario 2:
-  Input the map scale and the number of order per day. Then the program will form a panda DataFrame that indicates different number of delivery men, the profit and the order successful rate.
+- Scenario2.py:
+  Input 'the map scale' and 'the number of order per day'. Then the program will form a panda DataFrame that indicates different number of delivery men, the profit and the order successful rate.
 
 ## All Sources Used:
 
