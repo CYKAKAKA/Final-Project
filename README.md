@@ -9,6 +9,7 @@ Yekai Chen, Xiner Liu, Yue Xian
 ## Responsibilities:
 Yue Xian: Developing the major part of scenario #2
 Yekai Chen: Developing the most part in scenario1, brainstorming for scenario2 and warpping up.
+Xiner Liu: Weather analysis, scenario1 design, code review and docstrings/doctests, final presentation and data visualization
 
 # Monte Carlo Simulation Scenario & Purpose: 
 
