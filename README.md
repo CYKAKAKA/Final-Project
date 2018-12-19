@@ -68,12 +68,18 @@ In the restaurant, there are three different sizes of food (small, medium, large
   
   
 ## Instructions on how to use the program:
-### Only Scenario1.py and Scenario2.py are executable. And the Function.py is the module used in these two programs. 
+### Only Scenario1.py and Scenario2.py are executable. 
 - Scenario1.py:
   Input 'the map scale', 'number of orders are waiting' and 'the previous order location'. Then the program will form a panda DataFrame that includes the probability of wait and deliver now for each node on the map. 
   
 - Scenario2.py:
   Input 'the map scale' and 'the number of order per day'. Then the program will form a panda DataFrame that indicates different number of delivery men, the profit and the order successful rate.
+### Other files descriptions
+- Function.py: Module used in these two programs. 
+- IS590PR Final Presentation.pptx: Powerpoint file used in class progress presentation.
+- Scenario 1 & 2 Visualization.ipynb: Visualizatoin work for result outputs.
+- Weather.ipynb: Data analysis from Champaign weather historic data.
+
 
 ## All Sources Used:
 
